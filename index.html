@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>File Sync - Latest Version Copier</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        padding: 28px 20px;
+        text-align: center;
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    .header p {
+        margin: 8px 0 0;
+        opacity: 0.9;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        font-size: 20px;
+    }
+
+    .folder-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .folder-box {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 20px;
+        background: #f8fafc;
+    }
+
+    .folder-box h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .folder-path {
+        min-height: 40px;
+        padding: 10px;
+        margin-top: 12px;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        word-break: break-all;
+        font-size: 14px;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-success {
+        background: #16a34a;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #64748b;
+        color: white;
+    }
+
+    button:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .status {
+        padding: 14px;
+        border-radius: 8px;
+        margin-top: 20px;
+        background: #eff6ff;
+        color: #1e40af;
+        display: none;
+    }
+
+    .warning {
+        background: #fff7ed;
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+    }
+
+    .success {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .error {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th,
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    th {
+        background: #f8fafc;
+        font-weight: bold;
+    }
+
+    .copy {
+        color: #15803d;
+        font-weight: bold;
+    }
+
+    .skip {
+        color: #64748b;
+    }
+
+    .failed {
+        color: #dc2626;
+        font-weight: bold;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 30px;
+        color: #64748b;
+    }
+
+    .info {
+        line-height: 1.6;
+        color: #475569;
+    }
+
+    .version {
+        font-weight: bold;
+        color: #2563eb;
+    }
+
+    @media (max-width: 750px) {
+        .folder-row {
+            grid-template-columns: 1fr;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>📁 File Sync</h1>
+    <p>Copy only the latest version of each file</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>1. Select Folders</h2>
+
+        <div class="folder-row">
+
+            <div class="folder-box">
+                <h3>📂 Source Folder</h3>
+
+                <button class="btn-primary" id="sourceBtn">
+                    Select Source Folder
+                </button>
+
+                <div class="folder-path" id="sourcePath">
+                    No source folder selected
+                </div>
+            </div>
+
+            <div class="folder-box">
+                <h3>📁 Destination Folder</h3>
+
+                <button class="btn-primary" id="destinationBtn">
+                    Select Destination Folder
+                </button>
+
+                <div class="folder-path" id="destinationPath">
+                    No destination folder selected
+                </div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+
+            <button
+                class="btn-secondary"
+                id="previewBtn"
+                disabled>
+                🔍 Preview
+            </button>
+
+            <button
+                class="btn-success"
+                id="copyBtn"
+                disabled>
+                📋 Copy Latest Files
+            </button>
+
+        </div>
+
+        <div id="status" class="status"></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>2. Results</h2>
+
+        <div class="info">
+            The application groups files using the filename prefix
+            before the first space and then checks the version information
+            after the prefix.
+        </div>
+
+        <div class="table-wrapper">
+
+            <table id="resultsTable">
+
+                <thead>
+                    <tr>
+                        <th>Prefix</th>
+                        <th>File Name</th>
+                        <th>Version</th>
+                        <th>Action</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+
+                <tbody id="resultsBody">
+
+                    <tr>
+                        <td colspan="5" class="empty">
+                            Select the folders and click Preview.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>ℹ️ How it works</h2>
+
+        <div class="info">
+
+            <p>
+                <strong>1.</strong>
+                Select the source folder containing the files.
+            </p>
+
+            <p>
+                <strong>2.</strong>
+                Select the destination folder.
+            </p>
+
+            <p>
+                <strong>3.</strong>
+                Click <strong>Preview</strong> to see which files will be copied.
+            </p>
+
+            <p>
+                <strong>4.</strong>
+                The application checks the filename after the prefix
+                to determine the latest version.
+            </p>
+
+            <p>
+                <strong>5.</strong>
+                Click <strong>Copy Latest Files</strong> to copy the selected files.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let sourceDirectory = null;
+let destinationDirectory = null;
+let currentPlan = [];
+
+
+/*
+-------------------------------------------------------
+Browser compatibility
+-------------------------------------------------------
+*/
+
+function checkBrowserSupport() {
+
+    if (!window.showDirectoryPicker) {
+
+        showStatus(
+            "Your browser does not support direct folder access. " +
+            "Please use a recent version of Google Chrome or Microsoft Edge.",
+            "warning"
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+
+/*
+-------------------------------------------------------
+Get filename without extension
+-------------------------------------------------------
+*/
+
+function removeExtension(fileName) {
+
+    const lastDot = fileName.lastIndexOf(".");
+
+    if (lastDot <= 0) {
+        return fileName;
+    }
+
+    return fileName.substring(0, lastDot);
+}
+
+
+/*
+-------------------------------------------------------
+Get prefix
+
+Same logic as the original application:
+
+Everything through the first space.
+
+Example:
+
+ABC 001 v1.xlsx
+    ↓
+ABC
+
+If there is no space:
+filename without extension.
+-------------------------------------------------------
+*/
+
+function getGroupKey(fileName) {
+
+    const spaceIndex = fileName.indexOf(" ");
+
+    if (spaceIndex === -1) {
+
+        return removeExtension(fileName)
+            .trim()
+            .toLowerCase();
+    }
+
+    return fileName
+        .substring(0, spaceIndex + 1)
+        .trim()
+        .toLowerCase();
+}
+
+
+/*
+-------------------------------------------------------
+Get text after prefix
+-------------------------------------------------------
+*/
+
+function getVersionPart(fileName) {
+
+    const spaceIndex = fileName.indexOf(" ");
+
+    if (spaceIndex === -1) {
+        return "";
+    }
+
+    return removeExtension(
+        fileName.substring(spaceIndex + 1)
+    ).trim();
+}
+
+
+/*
+-------------------------------------------------------
+Extract version information
+
+Recognizes:
+
+v1
+v2
+v10
+
+ver1
+version2
+
+rev1
+revision2
+
+or numeric values after the prefix.
+-------------------------------------------------------
+*/
+
+function getVersionKey(fileName) {
+
+    const versionPart = getVersionPart(fileName);
+
+    if (!versionPart) {
+        return [];
+    }
+
+
+    const explicitVersion =
+        versionPart.match(
+            /(?:^|[\s._-])(v|ver|version|rev|revision)[\s._-]*(\d+(?:[\s._-]+\d+)*)/i
+        );
+
+
+    if (explicitVersion) {
+
+        const numbers =
+            explicitVersion[2]
+                .match(/\d+/g);
+
+        return numbers
+            ? numbers.map(Number)
+            : [];
+    }
+
+
+    const numbers =
+        versionPart.match(/\d+/g);
+
+
+    return numbers
+        ? numbers.map(Number)
+        : [];
+}
+
+
+/*
+-------------------------------------------------------
+Compare version arrays
+
+Example:
+
+[3] > [2]
+
+[2,10] > [2,9]
+
+[2,1] > [2]
+-------------------------------------------------------
+*/
+
+function compareVersion(a, b) {
+
+    const maxLength =
+        Math.max(a.length, b.length);
+
+
+    for (let i = 0; i < maxLength; i++) {
+
+        const av = a[i] ?? 0;
+        const bv = b[i] ?? 0;
+
+
+        if (av > bv) {
+            return 1;
+        }
+
+
+        if (av < bv) {
+            return -1;
+        }
+
+    }
+
+
+    return 0;
+}
+
+
+/*
+-------------------------------------------------------
+Scan source folder
+-------------------------------------------------------
+*/
+
+async function getSourceFiles() {
+
+    const files = [];
+
+
+    for await (const entry of sourceDirectory.values()) {
+
+        if (entry.kind !== "file") {
+            continue;
+        }
+
+
+        try {
+
+            const file = await entry.getFile();
+
+
+            files.push({
+
+                name: file.name,
+
+                handle: entry,
+
+                size: file.size,
+
+                lastModified: file.lastModified,
+
+                version: getVersionKey(file.name),
+
+                groupKey: getGroupKey(file.name)
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to read file:",
+                entry.name,
+                error
+            );
+
+        }
+
+    }
+
+
+    return files;
+}
+
+
+/*
+-------------------------------------------------------
+Create copy plan
+-------------------------------------------------------
+*/
+
+function createPlan(files) {
+
+    const groups = new Map();
+
+
+    for (const file of files) {
+
+        if (!groups.has(file.groupKey)) {
+
+            groups.set(
+                file.groupKey,
+                []
+            );
+
+        }
+
+
+        groups
+            .get(file.groupKey)
+            .push(file);
+
+    }
+
+
+    const plan = [];
+
+
+    for (const [groupKey, groupFiles] of groups) {
+
+        const sorted =
+            [...groupFiles].sort((a, b) => {
+
+                /*
+                Both have version information
+                */
+
+                if (
+                    a.version.length > 0 &&
+                    b.version.length > 0
+                ) {
+
+                    const versionResult =
+                        compareVersion(
+                            a.version,
+                            b.version
+                        );
+
+
+                    if (versionResult !== 0) {
+                        return -versionResult;
+                    }
+
+                }
+
+
+                /*
+                One has version information
+                */
+
+                if (
+                    a.version.length > 0 &&
+                    b.version.length === 0
+                ) {
+                    return -1;
+                }
+
+
+                if (
+                    a.version.length === 0 &&
+                    b.version.length > 0
+                ) {
+                    return 1;
+                }
+
+
+                /*
+                If versions are equal or unavailable,
+                newest modified file wins.
+                */
+
+                return b.lastModified - a.lastModified;
+
+            });
+
+
+        const winner = sorted[0];
+
+
+        let reason = "Newest modified file";
+
+
+        if (winner.version.length > 0) {
+
+            reason =
+                "Highest filename version";
+
+        }
+
+
+        for (let i = 0; i < sorted.length; i++) {
+
+            const file = sorted[i];
+
+
+            plan.push({
+
+                groupKey: groupKey,
+
+                file: file,
+
+                selected: i === 0,
+
+                reason:
+                    i === 0
+                        ? reason
+                        : "Older version / not selected"
+
+            });
+
+        }
+
+    }
+
+
+    return plan;
+}
+
+
+/*
+-------------------------------------------------------
+Display results
+-------------------------------------------------------
+*/
+
+function displayResults(plan) {
+
+    currentPlan = plan;
+
+
+    const body =
+        document.getElementById("resultsBody");
+
+
+    body.innerHTML = "";
+
+
+    if (plan.length === 0) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty">
+                    No files found in the source folder.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    for (const item of plan) {
+
+        const row =
+            document.createElement("tr");
+
+
+        const versionText =
+            item.file.version.length
+                ? item.file.version.join(".")
+                : "No version";
+
+
+        let action = "";
+
+        let actionClass = "";
+
+
+        if (item.selected) {
+
+            action = "COPY";
+
+            actionClass = "copy";
+
+        }
+        else {
+
+            action = "SKIP";
+
+            actionClass = "skip";
+
+        }
+
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHtml(item.groupKey)}
+            </td>
+
+            <td>
+                ${escapeHtml(item.file.name)}
+            </td>
+
+            <td>
+                <span class="version">
+                    ${escapeHtml(versionText)}
+                </span>
+            </td>
+
+            <td>
+                <span class="${actionClass}">
+                    ${action}
+                </span>
+            </td>
+
+            <td>
+                ${escapeHtml(item.reason)}
+            </td>
+
+        `;
+
+
+        body.appendChild(row);
+
+    }
+
+}
+
+
+/*
+-------------------------------------------------------
+Escape HTML
+-------------------------------------------------------
+*/
+
+function escapeHtml(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/*
+-------------------------------------------------------
+Preview
+-------------------------------------------------------
+*/
+
+async function previewFiles() {
+
+    if (!sourceDirectory) {
+
+        showStatus(
+            "Please select a Source Folder first.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        showStatus(
+            "Scanning source folder...",
+            ""
+        );
+
+
+        const files =
+            await getSourceFiles();
+
+
+        const plan =
+            createPlan(files);
+
+
+        displayResults(plan);
+
+
+        const selected =
+            plan.filter(
+                item => item.selected
+            ).length;
+
+
+        showStatus(
+
+            `Preview completed. ` +
+            `${files.length} files found. ` +
+            `${selected} latest files selected for copying.`,
+
+            "success"
+
+        );
+
+
+        document.getElementById(
+            "copyBtn"
+        ).disabled =
+            selected === 0;
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        showStatus(
+            "Unable to scan the source folder: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/*
+-------------------------------------------------------
+Copy latest files
+-------------------------------------------------------
+*/
+
+async function copyLatestFiles() {
+
+    if (!sourceDirectory) {
+
+        showStatus(
+            "Please select a Source Folder first.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    if (!destinationDirectory) {
+
+        showStatus(
+            "Please select a Destination Folder first.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const permission =
+            await destinationDirectory.requestPermission({
+                mode: "readwrite"
+            });
+
+
+        if (permission !== "granted") {
+
+            showStatus(
+                "Write permission was not granted for the destination folder.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentPlan.length === 0 ||
+            !currentPlan.some(
+                item => item.selected
+            )
+        ) {
+
+            await previewFiles();
+
+        }
+
+
+        const selectedFiles =
+            currentPlan.filter(
+                item => item.selected
+            );
+
+
+        if (selectedFiles.length === 0) {
+
+            showStatus(
+                "No files available to copy.",
+                "warning"
+            );
+
+            return;
+
+        }
+
+
+        let copied = 0;
+        let failed = 0;
+
+
+        for (const item of selectedFiles) {
+
+            try {
+
+                showStatus(
+                    `Copying ${item.file.name}...`,
+                    ""
+                );
+
+
+                const sourceFile =
+                    await item.file.handle.getFile();
+
+
+                const destinationFile =
+                    await destinationDirectory.getFileHandle(
+                        item.file.name,
+                        {
+                            create: true
+                        }
+                    );
+
+
+                const writable =
+                    await destinationFile.createWritable();
+
+
+                await writable.write(sourceFile);
+
+
+                await writable.close();
+
+
+                copied++;
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Copy failed:",
+                    item.file.name,
+                    error
+                );
+
+
+                failed++;
+
+
+                /*
+                Change the result row to FAILED
+                */
+
+                const rows =
+                    document.querySelectorAll(
+                        "#resultsBody tr"
+                    );
+
+
+                rows.forEach(row => {
+
+                    if (
+                        row.cells.length >= 2 &&
+                        row.cells[1].textContent.trim()
+                            === item.file.name
+                    ) {
+
+                        row.cells[3].innerHTML =
+                            `<span class="failed">FAILED</span>`;
+
+                        row.cells[4].textContent =
+                            error.message;
+
+                    }
+
+                });
+
+            }
+
+        }
+
+
+        if (failed === 0) {
+
+            showStatus(
+                `Copy completed successfully. ${copied} file(s) copied.`,
+                "success"
+            );
+
+        }
+        else {
+
+            showStatus(
+                `Copy completed with errors. ${copied} copied, ${failed} failed.`,
+                "warning"
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        showStatus(
+            "Copy operation failed: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/*
+-------------------------------------------------------
+Status message
+-------------------------------------------------------
+*/
+
+function showStatus(message, type) {
+
+    const status =
+        document.getElementById("status");
+
+
+    status.textContent =
+        message;
+
+
+    status.style.display =
+        "block";
+
+
+    status.className =
+        "status";
+
+
+    if (type) {
+
+        status.classList.add(type);
+
+    }
+
+}
+
+
+/*
+-------------------------------------------------------
+Select Source Folder
+-------------------------------------------------------
+*/
+
+document
+    .getElementById("sourceBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            if (!checkBrowserSupport()) {
+                return;
+            }
+
+
+            try {
+
+                sourceDirectory =
+                    await window.showDirectoryPicker({
+                        mode: "read"
+                    });
+
+
+                document.getElementById(
+                    "sourcePath"
+                ).textContent =
+                    sourceDirectory.name;
+
+
+                updateButtons();
+
+
+                showStatus(
+                    "Source folder selected: " +
+                    sourceDirectory.name,
+                    "success"
+                );
+
+            }
+
+            catch (error) {
+
+                if (error.name !== "AbortError") {
+
+                    showStatus(
+                        "Unable to select source folder: " +
+                        error.message,
+                        "error"
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+/*
+-------------------------------------------------------
+Select Destination Folder
+-------------------------------------------------------
+*/
+
+document
+    .getElementById("destinationBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            if (!checkBrowserSupport()) {
+                return;
+            }
+
+
+            try {
+
+                destinationDirectory =
+                    await window.showDirectoryPicker({
+                        mode: "readwrite"
+                    });
+
+
+                document.getElementById(
+                    "destinationPath"
+                ).textContent =
+                    destinationDirectory.name;
+
+
+                updateButtons();
+
+
+                showStatus(
+                    "Destination folder selected: " +
+                    destinationDirectory.name,
+                    "success"
+                );
+
+            }
+
+            catch (error) {
+
+                if (error.name !== "AbortError") {
+
+                    showStatus(
+                        "Unable to select destination folder: " +
+                        error.message,
+                        "error"
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+/*
+-------------------------------------------------------
+Button state
+-------------------------------------------------------
+*/
+
+function updateButtons() {
+
+    const ready =
+        sourceDirectory &&
+        destinationDirectory;
+
+
+    document.getElementById(
+        "previewBtn"
+    ).disabled =
+        !sourceDirectory;
+
+
+    document.getElementById(
+        "copyBtn"
+    ).disabled =
+        !ready;
+
+}
+
+
+/*
+-------------------------------------------------------
+Preview button
+-------------------------------------------------------
+*/
+
+document
+    .getElementById("previewBtn")
+    .addEventListener(
+        "click",
+        previewFiles
+    );
+
+
+/*
+-------------------------------------------------------
+Copy button
+-------------------------------------------------------
+*/
+
+document
+    .getElementById("copyBtn")
+    .addEventListener(
+        "click",
+        copyLatestFiles
+    );
+
+
+/*
+-------------------------------------------------------
+Initial check
+-------------------------------------------------------
+*/
+
+window.addEventListener(
+    "load",
+    () => {
+
+        checkBrowserSupport();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
