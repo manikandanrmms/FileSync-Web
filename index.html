@@ -3,839 +3,330 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>File Sync - Latest Version Copier</title>
-
+<title>File Sync - Latest File Copier</title>
 <style>
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f4f7fb;
-        color: #1f2937;
-    }
-
-    .header {
-        background: linear-gradient(135deg, #1e3a8a, #2563eb);
-        color: white;
-        padding: 28px 20px;
-        text-align: center;
-    }
-
-    .header h1 {
-        margin: 0;
-        font-size: 30px;
-    }
-
-    .header p {
-        margin: 8px 0 0;
-        opacity: 0.9;
-    }
-
-    .container {
-        max-width: 1100px;
-        margin: 30px auto;
-        padding: 0 20px;
-    }
-
-    .card {
-        background: white;
-        border-radius: 14px;
-        padding: 24px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-    }
-
-    .card h2 {
-        margin-top: 0;
-        font-size: 20px;
-    }
-
-    .folder-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-
-    .folder-box {
-        border: 2px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 20px;
-        background: #f8fafc;
-    }
-
-    .folder-box h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-
-    .folder-path {
-        min-height: 40px;
-        padding: 10px;
-        margin-top: 12px;
-        border-radius: 8px;
-        background: white;
-        border: 1px solid #e2e8f0;
-        color: #475569;
-        word-break: break-all;
-        font-size: 14px;
-    }
-
-    button {
-        border: none;
-        border-radius: 8px;
-        padding: 12px 20px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    button:hover {
-        transform: translateY(-1px);
-    }
-
-    .btn-primary {
-        background: #2563eb;
-        color: white;
-    }
-
-    .btn-success {
-        background: #16a34a;
-        color: white;
-    }
-
-    .btn-secondary {
-        background: #64748b;
-        color: white;
-    }
-
-    button:disabled {
-        background: #cbd5e1;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .actions {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 20px;
-    }
-
-    .status {
-        padding: 14px;
-        border-radius: 8px;
-        margin-top: 20px;
-        background: #eff6ff;
-        color: #1e40af;
-        display: none;
-    }
-
-    .warning {
-        background: #fff7ed;
-        color: #9a3412;
-        border: 1px solid #fed7aa;
-    }
-
-    .success {
-        background: #f0fdf4;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-    }
-
-    .error {
-        background: #fef2f2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    th,
-    td {
-        padding: 12px;
-        border-bottom: 1px solid #e5e7eb;
-        text-align: left;
-        font-size: 14px;
-    }
-
-    th {
-        background: #f8fafc;
-        font-weight: bold;
-    }
-
-    .copy {
-        color: #15803d;
-        font-weight: bold;
-    }
-
-    .skip {
-        color: #64748b;
-    }
-
-    .failed {
-        color: #dc2626;
-        font-weight: bold;
-    }
-
-    .empty {
-        text-align: center;
-        padding: 30px;
-        color: #64748b;
-    }
-
-    .info {
-        line-height: 1.6;
-        color: #475569;
-    }
-
-    .version {
-        font-weight: bold;
-        color: #2563eb;
-    }
-
-    @media (max-width: 750px) {
-        .folder-row {
-            grid-template-columns: 1fr;
-        }
-
-        .header h1 {
-            font-size: 24px;
-        }
-    }
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#1f2937}
+.header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:28px 20px;text-align:center}
+.header h1{margin:0;font-size:30px}.header p{margin:8px 0 0;opacity:.9}
+.container{max-width:1100px;margin:30px auto;padding:0 20px}
+.card{background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+.card h2{margin-top:0;font-size:20px}
+.folder-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.folder-box{border:2px dashed #cbd5e1;border-radius:12px;padding:20px;background:#f8fafc}
+.folder-box h3{margin-top:0;margin-bottom:10px}
+.folder-path{min-height:40px;padding:10px;margin-top:12px;border-radius:8px;background:#fff;border:1px solid #e2e8f0;color:#475569;word-break:break-all;font-size:14px}
+button{border:0;border-radius:8px;padding:12px 20px;font-size:15px;font-weight:bold;cursor:pointer;transition:.2s}
+button:hover{transform:translateY(-1px)}
+.btn-primary{background:#2563eb;color:#fff}.btn-success{background:#16a34a;color:#fff}.btn-secondary{background:#64748b;color:#fff}
+button:disabled{background:#cbd5e1;cursor:not-allowed;transform:none}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.status{padding:14px;border-radius:8px;margin-top:20px;background:#eff6ff;color:#1e40af;display:none}
+.warning{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:12px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}
+th{background:#f8fafc;font-weight:bold}
+.copy{color:#15803d;font-weight:bold}.skip{color:#64748b}.failed{color:#dc2626;font-weight:bold}
+.empty{text-align:center;padding:30px;color:#64748b}
+.info{line-height:1.6;color:#475569}.version{font-weight:bold;color:#2563eb}
+.latest-date{white-space:nowrap}
+@media(max-width:750px){.folder-row{grid-template-columns:1fr}.header h1{font-size:24px}}
 </style>
 </head>
-
 <body>
 
 <div class="header">
-    <h1>📁 File Sync</h1>
-    <p>Copy only the latest version of each file</p>
+<h1>📁 File Sync</h1>
+<p>Copy only the newest file for each filename group</p>
 </div>
 
 <div class="container">
 
-    <div class="card">
-        <h2>1. Select Folders</h2>
+<div class="card">
+<h2>1. Select Folders</h2>
+<div class="folder-row">
+<div class="folder-box">
+<h3>📂 Source Folder</h3>
+<button class="btn-primary" id="sourceBtn">Select Source Folder</button>
+<div class="folder-path" id="sourcePath">No source folder selected</div>
+</div>
+<div class="folder-box">
+<h3>📁 Destination Folder</h3>
+<button class="btn-primary" id="destinationBtn">Select Destination Folder</button>
+<div class="folder-path" id="destinationPath">No destination folder selected</div>
+</div>
+</div>
 
-        <div class="folder-row">
+<div class="actions">
+<button class="btn-secondary" id="previewBtn" disabled>🔍 Preview</button>
+<button class="btn-success" id="copyBtn" disabled>📋 Copy Latest Files</button>
+</div>
+<div id="status" class="status"></div>
+</div>
 
-            <div class="folder-box">
-                <h3>📂 Source Folder</h3>
+<div class="card">
+<h2>2. Results</h2>
+<div class="info">
+The application groups files using the filename prefix before the first space.
+<strong>The newest modified date is the primary selection rule.</strong>
+The filename version is used only when modified dates are identical.
+</div>
 
-                <button class="btn-primary" id="sourceBtn">
-                    Select Source Folder
-                </button>
+<div class="table-wrapper">
+<table id="resultsTable">
+<thead>
+<tr>
+<th>Prefix</th>
+<th>File Name</th>
+<th>Version</th>
+<th>Modified Date</th>
+<th>Action</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody id="resultsBody">
+<tr><td colspan="6" class="empty">Select the folders and click Preview.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 
-                <div class="folder-path" id="sourcePath">
-                    No source folder selected
-                </div>
-            </div>
-
-            <div class="folder-box">
-                <h3>📁 Destination Folder</h3>
-
-                <button class="btn-primary" id="destinationBtn">
-                    Select Destination Folder
-                </button>
-
-                <div class="folder-path" id="destinationPath">
-                    No destination folder selected
-                </div>
-            </div>
-
-        </div>
-
-        <div class="actions">
-
-            <button
-                class="btn-secondary"
-                id="previewBtn"
-                disabled>
-                🔍 Preview
-            </button>
-
-            <button
-                class="btn-success"
-                id="copyBtn"
-                disabled>
-                📋 Copy Latest Files
-            </button>
-
-        </div>
-
-        <div id="status" class="status"></div>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>2. Results</h2>
-
-        <div class="info">
-            The application groups files using the filename prefix
-            before the first space and then checks the version information
-            after the prefix.
-        </div>
-
-        <div class="table-wrapper">
-
-            <table id="resultsTable">
-
-                <thead>
-                    <tr>
-                        <th>Prefix</th>
-                        <th>File Name</th>
-                        <th>Version</th>
-                        <th>Action</th>
-                        <th>Reason</th>
-                    </tr>
-                </thead>
-
-                <tbody id="resultsBody">
-
-                    <tr>
-                        <td colspan="5" class="empty">
-                            Select the folders and click Preview.
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>ℹ️ How it works</h2>
-
-        <div class="info">
-
-            <p>
-                <strong>1.</strong>
-                Select the source folder containing the files.
-            </p>
-
-            <p>
-                <strong>2.</strong>
-                Select the destination folder.
-            </p>
-
-            <p>
-                <strong>3.</strong>
-                Click <strong>Preview</strong> to see which files will be copied.
-            </p>
-
-            <p>
-                <strong>4.</strong>
-                The application checks the filename after the prefix
-                to determine the latest version.
-            </p>
-
-            <p>
-                <strong>5.</strong>
-                Click <strong>Copy Latest Files</strong> to copy the selected files.
-            </p>
-
-        </div>
-
-    </div>
+<div class="card">
+<h2>ℹ️ How it works</h2>
+<div class="info">
+<p><strong>1.</strong> Select the source folder containing the files.</p>
+<p><strong>2.</strong> Select the destination folder.</p>
+<p><strong>3.</strong> Click <strong>Preview</strong>.</p>
+<p><strong>4.</strong> Files are grouped by the prefix before the first space.</p>
+<p><strong>5.</strong> The file with the <strong>newest Modified Date</strong> is selected.</p>
+<p><strong>6.</strong> If two files have exactly the same Modified Date, the highest filename version is used as the tie-breaker.</p>
+<p><strong>7.</strong> Click <strong>Copy Latest Files</strong> to copy the selected files.</p>
+</div>
+</div>
 
 </div>
 
-
 <script>
+let sourceDirectory=null;
+let destinationDirectory=null;
+let currentPlan=[];
 
-let sourceDirectory = null;
-let destinationDirectory = null;
-let currentPlan = [];
-
-
-/*
--------------------------------------------------------
-Browser compatibility
--------------------------------------------------------
-*/
-
-function checkBrowserSupport() {
-
-    if (!window.showDirectoryPicker) {
-
+function checkBrowserSupport(){
+    if(!window.showDirectoryPicker){
         showStatus(
-            "Your browser does not support direct folder access. " +
-            "Please use a recent version of Google Chrome or Microsoft Edge.",
+            "Your browser does not support direct folder access. Please use a recent version of Google Chrome or Microsoft Edge.",
             "warning"
         );
-
         return false;
     }
-
     return true;
 }
 
-
-/*
--------------------------------------------------------
-Get filename without extension
--------------------------------------------------------
-*/
-
-function removeExtension(fileName) {
-
-    const lastDot = fileName.lastIndexOf(".");
-
-    if (lastDot <= 0) {
-        return fileName;
-    }
-
-    return fileName.substring(0, lastDot);
+function removeExtension(fileName){
+    const lastDot=fileName.lastIndexOf(".");
+    if(lastDot<=0) return fileName;
+    return fileName.substring(0,lastDot);
 }
 
-
-/*
--------------------------------------------------------
-Get prefix
-
-Same logic as the original application:
-
-Everything through the first space.
-
-Example:
-
-ABC 001 v1.xlsx
-    ↓
-ABC
-
-If there is no space:
-filename without extension.
--------------------------------------------------------
-*/
-
-function getGroupKey(fileName) {
-
-    const spaceIndex = fileName.indexOf(" ");
-
-    if (spaceIndex === -1) {
-
-        return removeExtension(fileName)
-            .trim()
-            .toLowerCase();
+function getGroupKey(fileName){
+    const spaceIndex=fileName.indexOf(" ");
+    if(spaceIndex===-1){
+        return removeExtension(fileName).trim().toLowerCase();
     }
-
-    return fileName
-        .substring(0, spaceIndex + 1)
-        .trim()
-        .toLowerCase();
+    return fileName.substring(0,spaceIndex+1).trim().toLowerCase();
 }
 
-
-/*
--------------------------------------------------------
-Get text after prefix
--------------------------------------------------------
-*/
-
-function getVersionPart(fileName) {
-
-    const spaceIndex = fileName.indexOf(" ");
-
-    if (spaceIndex === -1) {
-        return "";
-    }
-
-    return removeExtension(
-        fileName.substring(spaceIndex + 1)
-    ).trim();
+function getVersionPart(fileName){
+    const spaceIndex=fileName.indexOf(" ");
+    if(spaceIndex===-1) return "";
+    return removeExtension(fileName.substring(spaceIndex+1)).trim();
 }
 
+function getVersionKey(fileName){
+    const versionPart=getVersionPart(fileName);
+    if(!versionPart) return [];
 
-/*
--------------------------------------------------------
-Extract version information
+    const explicitVersion=versionPart.match(
+        /(?:^|[\s._-])(v|ver|version|rev|revision)[\s._-]*(\d+(?:[\s._-]+\d+)*)/i
+    );
 
-Recognizes:
-
-v1
-v2
-v10
-
-ver1
-version2
-
-rev1
-revision2
-
-or numeric values after the prefix.
--------------------------------------------------------
-*/
-
-function getVersionKey(fileName) {
-
-    const versionPart = getVersionPart(fileName);
-
-    if (!versionPart) {
-        return [];
+    if(explicitVersion){
+        const numbers=explicitVersion[2].match(/\d+/g);
+        return numbers ? numbers.map(Number) : [];
     }
 
-
-    const explicitVersion =
-        versionPart.match(
-            /(?:^|[\s._-])(v|ver|version|rev|revision)[\s._-]*(\d+(?:[\s._-]+\d+)*)/i
-        );
-
-
-    if (explicitVersion) {
-
-        const numbers =
-            explicitVersion[2]
-                .match(/\d+/g);
-
-        return numbers
-            ? numbers.map(Number)
-            : [];
-    }
-
-
-    const numbers =
-        versionPart.match(/\d+/g);
-
-
-    return numbers
-        ? numbers.map(Number)
-        : [];
+    const numbers=versionPart.match(/\d+/g);
+    return numbers ? numbers.map(Number) : [];
 }
 
+function compareVersion(a,b){
+    const maxLength=Math.max(a.length,b.length);
 
-/*
--------------------------------------------------------
-Compare version arrays
+    for(let i=0;i<maxLength;i++){
+        const av=a[i]??0;
+        const bv=b[i]??0;
 
-Example:
-
-[3] > [2]
-
-[2,10] > [2,9]
-
-[2,1] > [2]
--------------------------------------------------------
-*/
-
-function compareVersion(a, b) {
-
-    const maxLength =
-        Math.max(a.length, b.length);
-
-
-    for (let i = 0; i < maxLength; i++) {
-
-        const av = a[i] ?? 0;
-        const bv = b[i] ?? 0;
-
-
-        if (av > bv) {
-            return 1;
-        }
-
-
-        if (av < bv) {
-            return -1;
-        }
-
+        if(av>bv) return 1;
+        if(av<bv) return -1;
     }
-
 
     return 0;
 }
 
+async function getSourceFiles(){
+    const files=[];
 
-/*
--------------------------------------------------------
-Scan source folder
--------------------------------------------------------
-*/
+    for await(const entry of sourceDirectory.values()){
+        if(entry.kind!=="file") continue;
 
-async function getSourceFiles() {
-
-    const files = [];
-
-
-    for await (const entry of sourceDirectory.values()) {
-
-        if (entry.kind !== "file") {
-            continue;
-        }
-
-
-        try {
-
-            const file = await entry.getFile();
-
+        try{
+            const file=await entry.getFile();
 
             files.push({
+                name:file.name,
+                handle:entry,
+                size:file.size,
 
-                name: file.name,
+                // Browser File System Access API exposes lastModified.
+                // This is used as the primary "newest file" criterion.
+                lastModified:file.lastModified,
 
-                handle: entry,
-
-                size: file.size,
-
-                lastModified: file.lastModified,
-
-                version: getVersionKey(file.name),
-
-                groupKey: getGroupKey(file.name)
-
+                version:getVersionKey(file.name),
+                groupKey:getGroupKey(file.name)
             });
-
         }
-
-        catch (error) {
-
-            console.error(
-                "Unable to read file:",
-                entry.name,
-                error
-            );
-
+        catch(error){
+            console.error("Unable to read file:",entry.name,error);
         }
-
     }
-
 
     return files;
 }
 
-
 /*
--------------------------------------------------------
-Create copy plan
--------------------------------------------------------
+PRIMARY SELECTION RULE:
+    Newest Modified Date wins.
+
+SECONDARY RULE:
+    If Modified Date is identical, highest filename version wins.
+
+This fixes the previous behaviour where 3381 automatically beat 2286.
 */
+function createPlan(files){
+    const groups=new Map();
 
-function createPlan(files) {
-
-    const groups = new Map();
-
-
-    for (const file of files) {
-
-        if (!groups.has(file.groupKey)) {
-
-            groups.set(
-                file.groupKey,
-                []
-            );
-
+    for(const file of files){
+        if(!groups.has(file.groupKey)){
+            groups.set(file.groupKey,[]);
         }
 
-
-        groups
-            .get(file.groupKey)
-            .push(file);
-
+        groups.get(file.groupKey).push(file);
     }
 
+    const plan=[];
 
-    const plan = [];
+    for(const [groupKey,groupFiles] of groups){
 
+        const sorted=[...groupFiles].sort((a,b)=>{
 
-    for (const [groupKey, groupFiles] of groups) {
+            // 1. Newest modified date is ALWAYS the primary rule.
+            if(a.lastModified!==b.lastModified){
+                return b.lastModified-a.lastModified;
+            }
 
-        const sorted =
-            [...groupFiles].sort((a, b) => {
+            // 2. Only if dates are identical, compare filename versions.
+            if(a.version.length>0 && b.version.length>0){
+                const versionResult=compareVersion(a.version,b.version);
 
-                /*
-                Both have version information
-                */
-
-                if (
-                    a.version.length > 0 &&
-                    b.version.length > 0
-                ) {
-
-                    const versionResult =
-                        compareVersion(
-                            a.version,
-                            b.version
-                        );
-
-
-                    if (versionResult !== 0) {
-                        return -versionResult;
-                    }
-
+                if(versionResult!==0){
+                    return -versionResult;
                 }
+            }
 
+            // 3. If only one has a version, keep the versioned file first.
+            if(a.version.length>0 && b.version.length===0){
+                return -1;
+            }
 
-                /*
-                One has version information
-                */
+            if(a.version.length===0 && b.version.length>0){
+                return 1;
+            }
 
-                if (
-                    a.version.length > 0 &&
-                    b.version.length === 0
-                ) {
-                    return -1;
-                }
+            return 0;
+        });
 
+        const winner=sorted[0];
 
-                if (
-                    a.version.length === 0 &&
-                    b.version.length > 0
-                ) {
-                    return 1;
-                }
+        const reason="Newest modified date";
 
-
-                /*
-                If versions are equal or unavailable,
-                newest modified file wins.
-                */
-
-                return b.lastModified - a.lastModified;
-
-            });
-
-
-        const winner = sorted[0];
-
-
-        let reason = "Newest modified file";
-
-
-        if (winner.version.length > 0) {
-
-            reason =
-                "Highest filename version";
-
-        }
-
-
-        for (let i = 0; i < sorted.length; i++) {
-
-            const file = sorted[i];
-
+        for(let i=0;i<sorted.length;i++){
+            const file=sorted[i];
 
             plan.push({
-
-                groupKey: groupKey,
-
-                file: file,
-
-                selected: i === 0,
-
-                reason:
-                    i === 0
-                        ? reason
-                        : "Older version / not selected"
-
+                groupKey:groupKey,
+                file:file,
+                selected:i===0,
+                reason:i===0 ? reason : "Older modified date / not selected"
             });
-
         }
-
     }
-
 
     return plan;
 }
 
+function displayResults(plan){
+    currentPlan=plan;
 
-/*
--------------------------------------------------------
-Display results
--------------------------------------------------------
-*/
+    const body=document.getElementById("resultsBody");
+    body.innerHTML="";
 
-function displayResults(plan) {
-
-    currentPlan = plan;
-
-
-    const body =
-        document.getElementById("resultsBody");
-
-
-    body.innerHTML = "";
-
-
-    if (plan.length === 0) {
-
-        body.innerHTML = `
+    if(plan.length===0){
+        body.innerHTML=`
             <tr>
-                <td colspan="5" class="empty">
+                <td colspan="6" class="empty">
                     No files found in the source folder.
                 </td>
-            </tr>
-        `;
-
+            </tr>`;
         return;
     }
 
+    for(const item of plan){
+        const row=document.createElement("tr");
 
-    for (const item of plan) {
+        const versionText=item.file.version.length
+            ? item.file.version.join(".")
+            : "No version";
 
-        const row =
-            document.createElement("tr");
+        const modifiedDate=new Date(item.file.lastModified).toLocaleString();
 
+        let action="";
+        let actionClass="";
 
-        const versionText =
-            item.file.version.length
-                ? item.file.version.join(".")
-                : "No version";
-
-
-        let action = "";
-
-        let actionClass = "";
-
-
-        if (item.selected) {
-
-            action = "COPY";
-
-            actionClass = "copy";
-
+        if(item.selected){
+            action="COPY";
+            actionClass="copy";
         }
-        else {
-
-            action = "SKIP";
-
-            actionClass = "skip";
-
+        else{
+            action="SKIP";
+            actionClass="skip";
         }
 
+        row.innerHTML=`
+            <td>${escapeHtml(item.groupKey)}</td>
 
-        row.innerHTML = `
-
-            <td>
-                ${escapeHtml(item.groupKey)}
-            </td>
-
-            <td>
-                ${escapeHtml(item.file.name)}
-            </td>
+            <td>${escapeHtml(item.file.name)}</td>
 
             <td>
                 <span class="version">
                     ${escapeHtml(versionText)}
                 </span>
+            </td>
+
+            <td class="latest-date">
+                ${escapeHtml(modifiedDate)}
             </td>
 
             <td>
@@ -847,545 +338,239 @@ function displayResults(plan) {
             <td>
                 ${escapeHtml(item.reason)}
             </td>
-
         `;
 
-
         body.appendChild(row);
-
     }
-
 }
 
-
-/*
--------------------------------------------------------
-Escape HTML
--------------------------------------------------------
-*/
-
-function escapeHtml(value) {
-
+function escapeHtml(value){
     return String(value)
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/'/g, "&#039;");
-
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
-
-/*
--------------------------------------------------------
-Preview
--------------------------------------------------------
-*/
-
-async function previewFiles() {
-
-    if (!sourceDirectory) {
-
-        showStatus(
-            "Please select a Source Folder first.",
-            "warning"
-        );
-
+async function previewFiles(){
+    if(!sourceDirectory){
+        showStatus("Please select a Source Folder first.","warning");
         return;
-
     }
 
+    try{
+        showStatus("Scanning source folder...","");
 
-    try {
-
-        showStatus(
-            "Scanning source folder...",
-            ""
-        );
-
-
-        const files =
-            await getSourceFiles();
-
-
-        const plan =
-            createPlan(files);
-
+        const files=await getSourceFiles();
+        const plan=createPlan(files);
 
         displayResults(plan);
 
-
-        const selected =
-            plan.filter(
-                item => item.selected
-            ).length;
-
+        const selected=plan.filter(item=>item.selected).length;
 
         showStatus(
-
-            `Preview completed. ` +
-            `${files.length} files found. ` +
-            `${selected} latest files selected for copying.`,
-
+            `Preview completed. ${files.length} files found. ${selected} latest files selected for copying.`,
             "success"
-
         );
 
-
-        document.getElementById(
-            "copyBtn"
-        ).disabled =
-            selected === 0;
-
+        document.getElementById("copyBtn").disabled=selected===0;
     }
-
-    catch (error) {
-
+    catch(error){
         console.error(error);
 
-
         showStatus(
-            "Unable to scan the source folder: " +
-            error.message,
+            "Unable to scan the source folder: "+error.message,
             "error"
         );
-
     }
-
 }
 
-
-/*
--------------------------------------------------------
-Copy latest files
--------------------------------------------------------
-*/
-
-async function copyLatestFiles() {
-
-    if (!sourceDirectory) {
-
-        showStatus(
-            "Please select a Source Folder first.",
-            "warning"
-        );
-
+async function copyLatestFiles(){
+    if(!sourceDirectory){
+        showStatus("Please select a Source Folder first.","warning");
         return;
-
     }
 
-
-    if (!destinationDirectory) {
-
-        showStatus(
-            "Please select a Destination Folder first.",
-            "warning"
-        );
-
+    if(!destinationDirectory){
+        showStatus("Please select a Destination Folder first.","warning");
         return;
-
     }
 
+    try{
+        const permission=await destinationDirectory.requestPermission({
+            mode:"readwrite"
+        });
 
-    try {
-
-        const permission =
-            await destinationDirectory.requestPermission({
-                mode: "readwrite"
-            });
-
-
-        if (permission !== "granted") {
-
+        if(permission!=="granted"){
             showStatus(
                 "Write permission was not granted for the destination folder.",
                 "error"
             );
-
             return;
-
         }
 
-
-        if (
-            currentPlan.length === 0 ||
-            !currentPlan.some(
-                item => item.selected
-            )
-        ) {
-
+        if(
+            currentPlan.length===0 ||
+            !currentPlan.some(item=>item.selected)
+        ){
             await previewFiles();
-
         }
 
+        const selectedFiles=currentPlan.filter(item=>item.selected);
 
-        const selectedFiles =
-            currentPlan.filter(
-                item => item.selected
-            );
-
-
-        if (selectedFiles.length === 0) {
-
-            showStatus(
-                "No files available to copy.",
-                "warning"
-            );
-
+        if(selectedFiles.length===0){
+            showStatus("No files available to copy.","warning");
             return;
-
         }
 
+        let copied=0;
+        let failed=0;
 
-        let copied = 0;
-        let failed = 0;
+        for(const item of selectedFiles){
+            try{
+                showStatus(`Copying ${item.file.name}...`,"");
 
+                const sourceFile=await item.file.handle.getFile();
 
-        for (const item of selectedFiles) {
-
-            try {
-
-                showStatus(
-                    `Copying ${item.file.name}...`,
-                    ""
-                );
-
-
-                const sourceFile =
-                    await item.file.handle.getFile();
-
-
-                const destinationFile =
+                const destinationFile=
                     await destinationDirectory.getFileHandle(
                         item.file.name,
-                        {
-                            create: true
-                        }
+                        {create:true}
                     );
 
-
-                const writable =
-                    await destinationFile.createWritable();
-
+                const writable=await destinationFile.createWritable();
 
                 await writable.write(sourceFile);
-
-
                 await writable.close();
 
-
                 copied++;
-
             }
-
-            catch (error) {
-
-                console.error(
-                    "Copy failed:",
-                    item.file.name,
-                    error
-                );
-
+            catch(error){
+                console.error("Copy failed:",item.file.name,error);
 
                 failed++;
 
+                const rows=document.querySelectorAll("#resultsBody tr");
 
-                /*
-                Change the result row to FAILED
-                */
-
-                const rows =
-                    document.querySelectorAll(
-                        "#resultsBody tr"
-                    );
-
-
-                rows.forEach(row => {
-
-                    if (
-                        row.cells.length >= 2 &&
-                        row.cells[1].textContent.trim()
-                            === item.file.name
-                    ) {
-
-                        row.cells[3].innerHTML =
+                rows.forEach(row=>{
+                    if(
+                        row.cells.length>=2 &&
+                        row.cells[1].textContent.trim()===item.file.name
+                    ){
+                        row.cells[4].innerHTML=
                             `<span class="failed">FAILED</span>`;
 
-                        row.cells[4].textContent =
-                            error.message;
-
+                        row.cells[5].textContent=error.message;
                     }
-
                 });
-
             }
-
         }
 
-
-        if (failed === 0) {
-
+        if(failed===0){
             showStatus(
                 `Copy completed successfully. ${copied} file(s) copied.`,
                 "success"
             );
-
         }
-        else {
-
+        else{
             showStatus(
                 `Copy completed with errors. ${copied} copied, ${failed} failed.`,
                 "warning"
             );
-
         }
-
     }
-
-    catch (error) {
-
+    catch(error){
         console.error(error);
 
-
         showStatus(
-            "Copy operation failed: " +
-            error.message,
+            "Copy operation failed: "+error.message,
             "error"
         );
-
     }
-
 }
 
+function showStatus(message,type){
+    const status=document.getElementById("status");
 
-/*
--------------------------------------------------------
-Status message
--------------------------------------------------------
-*/
+    status.textContent=message;
+    status.style.display="block";
+    status.className="status";
 
-function showStatus(message, type) {
-
-    const status =
-        document.getElementById("status");
-
-
-    status.textContent =
-        message;
-
-
-    status.style.display =
-        "block";
-
-
-    status.className =
-        "status";
-
-
-    if (type) {
-
+    if(type){
         status.classList.add(type);
-
     }
-
 }
 
+document.getElementById("sourceBtn").addEventListener("click",async()=>{
+    if(!checkBrowserSupport()) return;
 
-/*
--------------------------------------------------------
-Select Source Folder
--------------------------------------------------------
-*/
+    try{
+        sourceDirectory=await window.showDirectoryPicker({
+            mode:"read"
+        });
 
-document
-    .getElementById("sourceBtn")
-    .addEventListener(
-        "click",
-        async () => {
+        document.getElementById("sourcePath").textContent=
+            sourceDirectory.name;
 
-            if (!checkBrowserSupport()) {
-                return;
-            }
+        updateButtons();
 
-
-            try {
-
-                sourceDirectory =
-                    await window.showDirectoryPicker({
-                        mode: "read"
-                    });
-
-
-                document.getElementById(
-                    "sourcePath"
-                ).textContent =
-                    sourceDirectory.name;
-
-
-                updateButtons();
-
-
-                showStatus(
-                    "Source folder selected: " +
-                    sourceDirectory.name,
-                    "success"
-                );
-
-            }
-
-            catch (error) {
-
-                if (error.name !== "AbortError") {
-
-                    showStatus(
-                        "Unable to select source folder: " +
-                        error.message,
-                        "error"
-                    );
-
-                }
-
-            }
-
+        showStatus(
+            "Source folder selected: "+sourceDirectory.name,
+            "success"
+        );
+    }
+    catch(error){
+        if(error.name!=="AbortError"){
+            showStatus(
+                "Unable to select source folder: "+error.message,
+                "error"
+            );
         }
-    );
+    }
+});
 
+document.getElementById("destinationBtn").addEventListener("click",async()=>{
+    if(!checkBrowserSupport()) return;
 
-/*
--------------------------------------------------------
-Select Destination Folder
--------------------------------------------------------
-*/
+    try{
+        destinationDirectory=await window.showDirectoryPicker({
+            mode:"readwrite"
+        });
 
-document
-    .getElementById("destinationBtn")
-    .addEventListener(
-        "click",
-        async () => {
+        document.getElementById("destinationPath").textContent=
+            destinationDirectory.name;
 
-            if (!checkBrowserSupport()) {
-                return;
-            }
+        updateButtons();
 
-
-            try {
-
-                destinationDirectory =
-                    await window.showDirectoryPicker({
-                        mode: "readwrite"
-                    });
-
-
-                document.getElementById(
-                    "destinationPath"
-                ).textContent =
-                    destinationDirectory.name;
-
-
-                updateButtons();
-
-
-                showStatus(
-                    "Destination folder selected: " +
-                    destinationDirectory.name,
-                    "success"
-                );
-
-            }
-
-            catch (error) {
-
-                if (error.name !== "AbortError") {
-
-                    showStatus(
-                        "Unable to select destination folder: " +
-                        error.message,
-                        "error"
-                    );
-
-                }
-
-            }
-
+        showStatus(
+            "Destination folder selected: "+destinationDirectory.name,
+            "success"
+        );
+    }
+    catch(error){
+        if(error.name!=="AbortError"){
+            showStatus(
+                "Unable to select destination folder: "+error.message,
+                "error"
+            );
         }
-    );
+    }
+});
 
+function updateButtons(){
+    const ready=sourceDirectory && destinationDirectory;
 
-/*
--------------------------------------------------------
-Button state
--------------------------------------------------------
-*/
-
-function updateButtons() {
-
-    const ready =
-        sourceDirectory &&
-        destinationDirectory;
-
-
-    document.getElementById(
-        "previewBtn"
-    ).disabled =
-        !sourceDirectory;
-
-
-    document.getElementById(
-        "copyBtn"
-    ).disabled =
-        !ready;
-
+    document.getElementById("previewBtn").disabled=!sourceDirectory;
+    document.getElementById("copyBtn").disabled=!ready;
 }
 
+document.getElementById("previewBtn").addEventListener("click",previewFiles);
+document.getElementById("copyBtn").addEventListener("click",copyLatestFiles);
 
-/*
--------------------------------------------------------
-Preview button
--------------------------------------------------------
-*/
-
-document
-    .getElementById("previewBtn")
-    .addEventListener(
-        "click",
-        previewFiles
-    );
-
-
-/*
--------------------------------------------------------
-Copy button
--------------------------------------------------------
-*/
-
-document
-    .getElementById("copyBtn")
-    .addEventListener(
-        "click",
-        copyLatestFiles
-    );
-
-
-/*
--------------------------------------------------------
-Initial check
--------------------------------------------------------
-*/
-
-window.addEventListener(
-    "load",
-    () => {
-
-        checkBrowserSupport();
-
-    }
-);
-
+window.addEventListener("load",()=>{
+    checkBrowserSupport();
+});
 </script>
 
 </body>
